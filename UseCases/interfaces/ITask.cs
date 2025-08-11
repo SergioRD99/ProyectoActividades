@@ -2,8 +2,8 @@
 
 public interface ITask
 {
-    Task<IEnumerable<Task>> GetAllTasksAsync();
-    Task<Task> InsertTaskAsync(Task task);
-    Task<Task> UpdateTaskAsync(Task task);
+    Task<IEnumerable<Entidades.Task>> GetAllTasksAsync();
+    Task<Entidades.Task> InsertTaskAsync(Entidades.Task task);
+    Task<Entidades.Task> UpdateTaskAsync(Entidades.Task task);
     Task<bool> DeleteTaskAsync(int taskId);
 }

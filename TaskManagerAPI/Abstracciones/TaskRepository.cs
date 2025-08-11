@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using UseCases.interfaces;
-using Entidades;
+using TaskManagerAPI.interfaces;
 
-namespace UseCases.Abstracciones
+namespace TaskManagerAPI.Abstracciones
 {
     public class TaskRepository : ITask
     {
@@ -13,7 +12,7 @@ namespace UseCases.Abstracciones
             _context = context;
         }
 
-        public async Task<IEnumerable<Entidades.Task>> GetAllTasksAsync()
+        public async Task<IEnumerable<global::Task>> GetAllTasksAsync()
         {
             return await _context.Tasks
                 .AsNoTracking()
@@ -21,14 +20,14 @@ namespace UseCases.Abstracciones
                 .ToListAsync();
         }
 
-        public async Task<Entidades.Task> InsertTaskAsync(Entidades.Task task)
+        public async Task<global::Task> InsertTaskAsync(global::Task task)
         {
             _context.Tasks.Add(task);
             await _context.SaveChangesAsync();
             return task;
         }
 
-        public async Task<Entidades.Task> UpdateTaskAsync(Entidades.Task task)
+        public async Task<global::Task> UpdateTaskAsync(global::Task task)
         {
             var existingTask = await _context.Tasks.FindAsync(task.Id);
             if (existingTask == null)

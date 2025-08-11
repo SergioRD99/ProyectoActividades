@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using TaskManagerAPI.Abstracciones;
 using TaskManagerAPI.Data;
-using TaskManagerAPI.interfaces;
+using UseCases.Abstracciones;
+using UseCases.interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,15 +27,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Registrar el ApplicationDbContext como implementación de IApplicationDbContext
-builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-
-// Registrar tu servicio TaskRepository
-builder.Services.AddScoped<ITask, TaskRepository>();
-
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Registrar tu servicio
+builder.Services.AddScoped<ITask, TaskRepository>();
 
 var app = builder.Build();
 

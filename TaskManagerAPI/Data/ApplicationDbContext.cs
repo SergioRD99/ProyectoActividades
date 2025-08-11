@@ -1,9 +1,10 @@
-using Entidades;
 using Microsoft.EntityFrameworkCore;
+using TaskManagerAPI.Abstracciones;
+using TaskManagerAPI.Entidades;
 
 namespace TaskManagerAPI.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -11,7 +12,7 @@ namespace TaskManagerAPI.Data
         }
 
         // DbSets para cada entidad
-        public DbSet<Entidades.Task> Tasks { get; set; }
+        public DbSet<Task> Tasks { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TaskHistory> TaskHistories { get; set; }
@@ -22,7 +23,7 @@ namespace TaskManagerAPI.Data
             base.OnModelCreating(modelBuilder);
 
             // Configuraciones de las entidades
-            modelBuilder.Entity<Entidades.Task>(entity =>
+            modelBuilder.Entity<global::Task>(entity =>
             {
                 entity.HasKey(t => t.Id);
                 entity.Property(t => t.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
