@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TaskManagerAPI.Entidades;
 using TaskManagerAPI.interfaces;
 
@@ -23,6 +24,10 @@ namespace TaskManagerAPI.Abstracciones
         {
             task.CreatedAt = DateTime.UtcNow;
             task.Completed = false; // Por defecto falso al crear
+            if (task.Description.IsNullOrEmpty())
+            {
+                task.Description = "";
+            }
 
             _context.TaskActivitys.Add(task);
             await _context.SaveChangesAsync();
