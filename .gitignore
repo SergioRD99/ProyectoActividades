@@ -1,0 +1,48 @@
+## Archivos de compilación y binarios
+bin/
+obj/
+out/
+
+## Carpetas de dependencias
+node_modules/
+packages/
+*.nupkg
+*.snupkg
+
+## Archivos de configuración locales de VS Code
+.vscode/
+.history/
+
+## Archivos de usuario y temporales de Visual Studio / .NET
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Logs y cachés
+*.log
+*.tlog
+*.tmp
+*.cache
+*.vspscc
+
+## Configuración de IIS / IIS Express
+.vs/
+*.dbmdl
+*.jfm
+
+## Archivos generados por herramientas
+Generated\ Files/
+TestResults/
+*.coverage
+*.coveragexml
+
+## Archivos de publicación
+publish/
+*.pubxml
+*.publishproj
+
+## Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
