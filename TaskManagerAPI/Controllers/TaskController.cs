@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TaskManagerAPI.Entidades;
 using TaskManagerAPI.interfaces;
 
 namespace TaskManagerAPI.Controllers;
@@ -7,84 +8,76 @@ namespace TaskManagerAPI.Controllers;
 [Route("api/[controller]")]
 public class TaskController : ControllerBase
 {
-    private readonly ITask TaskService;
+    private readonly ITask _taskService;
+
     public TaskController(ITask taskService)
     {
-        TaskService = taskService;
+        _taskService = taskService;
     }
 
+    // GET /tasks
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var tasks = await TaskService.GetAllTasksAsync();
+        var tasks = await _taskService.GetAllTasksAsync();
         return Ok(tasks);
     }
 
+    // POST /tasks
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] global::Task task)
+    public async Task<IActionResult> Create([FromQuery] string title, [FromQuery] string? description = null)
     {
-        if (task == null || string.IsNullOrWhiteSpace(task.Title))
-        {
+        if (string.IsNullOrWhiteSpace(title))
             return BadRequest("Title is required");
-        }
 
-        try
+        var newTask = new TaskActivity
         {
-            task.CreatedAt = DateTime.UtcNow;
-            task.Completed = false;
+            Title = title,
+            Description = description,
+            CreatedAt = DateTime.UtcNow,
+            Completed = false
+        };
 
-            var createdTask = await TaskService.InsertTaskAsync(task);
-            return CreatedAtAction(nameof(GetAll), new { id = createdTask.Id }, createdTask);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        var createdTask = await _taskService.InsertTaskAsync(newTask);
+        return CreatedAtAction(nameof(GetAll), new { id = createdTask.Id }, createdTask);
     }
 
+    // PUT /tasks/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] global::Task taskUpdate)
+    public async Task<IActionResult> Update(
+        int id,
+        [FromQuery] string? title = null,
+        [FromQuery] string? description = null,
+        [FromQuery] bool? completed = null)
     {
-        if (taskUpdate == null || id != taskUpdate.Id)
-        {
-            return BadRequest("Invalid task data");
-        }
+        var existingTasks = await _taskService.GetAllTasksAsync();
+        var taskToUpdate = existingTasks.FirstOrDefault(t => t.Id == id);
+        if (taskToUpdate == null)
+            return NotFound();
 
-        try
-        {
-            taskUpdate.UpdatedAt = DateTime.UtcNow;
-            var updatedTask = await TaskService.UpdateTaskAsync(taskUpdate);
+        if (!string.IsNullOrWhiteSpace(title))
+            taskToUpdate.Title = title;
 
-            if (updatedTask == null)
-            {
-                return NotFound();
-            }
+        if (description != null)
+            taskToUpdate.Description = description;
 
-            return Ok(updatedTask);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        if (completed.HasValue)
+            taskToUpdate.Completed = completed.Value;
+
+        taskToUpdate.UpdatedAt = DateTime.UtcNow;
+
+        var updatedTask = await _taskService.UpdateTaskAsync(taskToUpdate);
+        return Ok(updatedTask);
     }
 
+    // DELETE /tasks/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            var result = await TaskService.DeleteTaskAsync(id);
+        var result = await _taskService.DeleteTaskAsync(id);
+        if (!result)
+            return NotFound();
 
-            if (!result)
-            {
-                return NotFound();
-            }
-
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        return NoContent();
     }
 }

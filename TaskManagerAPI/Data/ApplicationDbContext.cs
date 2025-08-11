@@ -17,11 +17,41 @@ namespace TaskManagerAPI.Data
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TaskHistory> TaskHistories { get; set; }
         public DbSet<TaskTag> TaskTags { get; set; }
+        public DbSet<TaskActivity> TaskActivitys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<TaskActivity>(entity =>
+            {
+                entity.ToTable("TaskActivity");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(510);
+
+                entity.Property(e => e.Description)
+                    .HasColumnType("nvarchar(max)")
+                    .IsRequired(false);
+
+                entity.Property(e => e.Completed)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(e => e.CreatedAt)
+                    .HasColumnType("datetime")
+                    .IsRequired(false);
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasColumnType("datetime")
+                    .IsRequired(false);
+            });
             // Configuraciones de las entidades
             modelBuilder.Entity<global::Task>(entity =>
             {

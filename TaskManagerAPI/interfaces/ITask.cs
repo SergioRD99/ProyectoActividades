@@ -1,9 +1,12 @@
-﻿namespace TaskManagerAPI.interfaces;
+﻿using TaskManagerAPI.Entidades;
+
+namespace TaskManagerAPI.interfaces;
 
 public interface ITask
 {
-    Task<IEnumerable<global::Task>> GetAllTasksAsync();
-    Task<global::Task> InsertTaskAsync(global::Task task);
-    Task<global::Task> UpdateTaskAsync(global::Task task);
+
+    Task<IEnumerable<TaskActivity>> GetAllTasksAsync();
+    Task<TaskActivity> InsertTaskAsync(TaskActivity task);
+    Task<TaskActivity?> UpdateTaskAsync(TaskActivity task);
     Task<bool> DeleteTaskAsync(int taskId);
 }

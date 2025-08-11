@@ -10,6 +10,7 @@ namespace TaskManagerAPI.Abstracciones
         DbSet<Tag> Tags { get; set; }
         DbSet<TaskHistory> TaskHistories { get; set; }
         DbSet<TaskTag> TaskTags { get; set; }
+        DbSet<TaskActivity> TaskActivitys { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

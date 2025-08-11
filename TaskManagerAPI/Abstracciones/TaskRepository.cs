@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TaskManagerAPI.Entidades;
 using TaskManagerAPI.interfaces;
 
 namespace TaskManagerAPI.Abstracciones
@@ -12,52 +13,51 @@ namespace TaskManagerAPI.Abstracciones
             _context = context;
         }
 
-        public async Task<IEnumerable<global::Task>> GetAllTasksAsync()
+        public async Task<IEnumerable<TaskActivity>> GetAllTasksAsync()
         {
-            return await _context.Tasks
-                .AsNoTracking()
-                .OrderByDescending(t => t.CreatedAt)
-                .ToListAsync();
+            // Trae todas las tareas
+            return await _context.TaskActivitys.ToListAsync();
         }
 
-        public async Task<global::Task> InsertTaskAsync(global::Task task)
+        public async Task<TaskActivity> InsertTaskAsync(TaskActivity task)
         {
-            _context.Tasks.Add(task);
+            task.CreatedAt = DateTime.UtcNow;
+            task.Completed = false; // Por defecto falso al crear
+
+            _context.TaskActivitys.Add(task);
             await _context.SaveChangesAsync();
+
             return task;
         }
 
-        public async Task<global::Task> UpdateTaskAsync(global::Task task)
+        public async Task<TaskActivity?> UpdateTaskAsync(TaskActivity task)
         {
-            var existingTask = await _context.Tasks.FindAsync(task.Id);
-            if (existingTask == null)
-                return null;
+            var existingTask = await _context.TaskActivitys.FindAsync(task.Id);
+            if (existingTask == null) return null;
 
-            // Update only the allowed fields
-            existingTask.Title = task.Title;
-            existingTask.Description = task.Description;
+            // Actualiza solo los campos permitidos
+            if (!string.IsNullOrEmpty(task.Title))
+                existingTask.Title = task.Title;
+
+            existingTask.Description = task.Description; // puede ser null, se actualiza
+
             existingTask.Completed = task.Completed;
+
             existingTask.UpdatedAt = DateTime.UtcNow;
 
-            // Optional fields that can be updated
-            if (task.DueDate.HasValue)
-                existingTask.DueDate = task.DueDate;
-
-            if (!string.IsNullOrEmpty(task.Priority))
-                existingTask.Priority = task.Priority;
-
             await _context.SaveChangesAsync();
+
             return existingTask;
         }
 
         public async Task<bool> DeleteTaskAsync(int taskId)
         {
-            var task = await _context.Tasks.FindAsync(taskId);
-            if (task == null)
-                return false;
+            var existingTask = await _context.TaskActivitys.FindAsync(taskId);
+            if (existingTask == null) return false;
 
-            _context.Tasks.Remove(task);
+            _context.TaskActivitys.Remove(existingTask);
             await _context.SaveChangesAsync();
+
             return true;
         }
     }
