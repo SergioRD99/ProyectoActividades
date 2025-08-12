@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace TaskManagerAPI.Controllers
 {
@@ -16,21 +15,21 @@ namespace TaskManagerAPI.Controllers
             _configuration = configuration;
         }
 
-        [HttpGet("test-connection")]
-        public async Task<IActionResult> TestConnection()
-        {
-            var connectionString = _configuration.GetConnectionString("DefaultConnection");
+        //[HttpGet("test-connection")]
+        //public async Task<IActionResult> TestConnection()
+        //{
+        //    var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
-            try
-            {
-                using var conn = new SqlConnection(connectionString);
-                await conn.OpenAsync();
-                return Ok(new { success = true, message = "Conexión ADO.NET exitosa." });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = ex.Message });
-            }
-        }
+        //    try
+        //    {
+        //        using var conn = new SqlConnection(connectionString);
+        //        await conn.OpenAsync();
+        //        return Ok(new { success = true, message = "Conexión ADO.NET exitosa." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new { success = false, message = ex.Message });
+        //    }
+        //}
     }
 }

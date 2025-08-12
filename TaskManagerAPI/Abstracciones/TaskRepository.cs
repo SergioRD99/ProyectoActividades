@@ -23,7 +23,7 @@ namespace TaskManagerAPI.Abstracciones
         public async Task<TaskActivity> InsertTaskAsync(TaskActivity task)
         {
             task.CreatedAt = DateTime.UtcNow;
-            task.Completed = false; // Por defecto falso al crear
+            task.Completed = false;
             if (task.Description.IsNullOrEmpty())
             {
                 task.Description = "";
@@ -44,7 +44,7 @@ namespace TaskManagerAPI.Abstracciones
             if (!string.IsNullOrEmpty(task.Title))
                 existingTask.Title = task.Title;
 
-            existingTask.Description = task.Description; // puede ser null, se actualiza
+            existingTask.Description = task.Description;
 
             existingTask.Completed = task.Completed;
 
